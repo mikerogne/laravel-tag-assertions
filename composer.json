@@ -1,0 +1,31 @@
+{
+    "name": "mikerogne/laravel-tag-assertions",
+    "description": "Adds useful tag assertions to Laravel's TestResponse class.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "MIT",
+    "require": {
+        "paquettg/php-html-parser": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rogne\\LaravelTagAssertions\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rogne\\LaravelTagAssertions\\Tests\\": "tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5",
+        "orchestra/testbench": "3.8.*"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rogne\\LaravelTagAssertions\\ServiceProvider"
+            ]
+        }
+    }
+}
