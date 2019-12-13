@@ -28,6 +28,15 @@
             <button type="submit">Submit</button>
         </p>
     </form>
+
+    <footer>
+        <ul>
+            <li>
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+            </li>
+        </ul>
+    </footer>
 </div>
 </body>
 </html>

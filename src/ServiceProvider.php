@@ -34,7 +34,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                     return $attributes(
                         $element->tag->name(),
                         $elementAttributes->toArray(),
-                        $element->text()
+                        $element->innerHtml()
                     );
                 }
 
@@ -101,7 +101,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                     return $attributes(
                         $element->tag->name(),
                         $elementAttributes->toArray(),
-                        $element->text()
+                        $element->innerHtml()
                     );
                 }
 

@@ -63,4 +63,14 @@ class SeeHtmlTest extends TestCase
             'name' => 'email',
         ]);
     }
+
+    /** @test */
+    public function sees_html_within_tag_content_via_callback()
+    {
+        $response = $this->get('/');
+
+        $response->assertSeeTag('footer', function ($tag, $attributes, $text) {
+            return strpos($text, '<a href="#home">Home</a>') !== false;
+        });
+    }
 }
