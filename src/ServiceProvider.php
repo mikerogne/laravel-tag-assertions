@@ -11,67 +11,139 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadViewsFrom(__DIR__.'/views', 'laravel-tag-assertions');
+        $this->loadViewsFrom(__DIR__ . '/views', 'laravel-tag-assertions');
 
         TestResponse::macro('assertSeeTag', function ($selector, $attributes = []) {
             $dom = new Dom;
             $dom->load($this->getContent());
-            $elements = $dom->find($selector);
+            $elements = collect($dom->find($selector));
 
             PHPUnit::assertTrue(
-                count($elements) > 0,
+                $elements->count() > 0,
                 "Could not find '{$selector}' in response."
             );
 
-            // TODO: Allow for searching for a vague tag like "input" and checking them
-            // TODO: ALL to see if at least one matches the criteria instead of just the
-            // TODO: first element found ($elements[0]->tag).
-            // TODO: What about value for things like textarea?
-            // Nice to have:
-            // $response->assertSeeTextarea('selector', 'value');
-            $elementAttributes = collect($elements[0]->tag->getAttributes())
-                ->map(function ($val, $key) {
-                    return $val['value'];
-                });
+            $found = $elements->first(function (Dom\HtmlNode $element) use ($attributes) {
+                $elementAttributes = collect($element->tag->getAttributes())
+                    ->map(function ($val, $key) {
+                        return $val['value'];
+                    });
 
-            if (is_callable($attributes)) {
-                PHPUnit::assertTrue(
-                    $attributes(
-                        $elements[0]->tag->name(),
+                // If callback was provided, use it.
+                if (is_callable($attributes)) {
+                    return $attributes(
+                        $element->tag->name(),
                         $elementAttributes->toArray(),
-                        $elements[0]->text
-                    )
-                );
+                        $element->text()
+                    );
+                }
+
+                // Otherwise, treat as array.
+                foreach ($attributes as $attributeName => $attributeValue) {
+                    // If this is a numeric index and we have a value, the user
+                    // specified an attribute to search for without a value.
+                    // Treat the "value" as the attribute name.
+                    if (is_numeric($attributeName) && $attributeValue) {
+                        $attributeName = $attributeValue;
+                        unset($attributeValue);
+                    }
+
+                    // If attribute not found on this element, stop here.
+                    if (!isset($elementAttributes[$attributeName])) {
+                        return false;
+                    }
+
+                    // If attribute value is set & does not match, no good.
+                    if (isset($attributeValue)) {
+                        if ($attributeValue != $elementAttributes[$attributeName]) {
+                            return false;
+                        }
+                    }
+                }
+
+                // After the foreach() loop, we've found all attributes.
+                return true;
+            });
+
+            PHPUnit::assertNotNull(
+                $found,
+                "Could not find '{$selector}' with specified attributes in response."
+            );
+
+            return $this;
+        });
+
+        TestResponse::macro('assertSeeTagContent', function ($selector, $content) {
+            return $this->assertSeeTag($selector, function ($tag, $tagAttributes, $text) use ($content) {
+                return $text == $content;
+            });
+        });
+
+        TestResponse::macro('assertDontSeeTag', function ($selector, $attributes = []) {
+            $dom = new Dom;
+            $dom->load($this->getContent());
+            $elements = collect($dom->find($selector));
+
+            if ($elements->count() == 0) {
+                PHPUnit::assertTrue(true, "Did not find '{$selector}' in response.");
 
                 return $this;
             }
 
-            foreach ($attributes as $attributeName => $attributeValue) {
-                if (is_numeric($attributeName) && $attributeValue) {
-                    $attributeName = $attributeValue;
-                    unset($attributeValue);
-                }
+            $found = $elements->first(function (Dom\HtmlNode $element) use ($attributes) {
+                $elementAttributes = collect($element->tag->getAttributes())
+                    ->map(function ($val, $key) {
+                        return $val['value'];
+                    });
 
-                //dump([
-                //    'name' => $attributeName,
-                //    'value' => isset($attributeValue) ? $attributeValue : 'NOT SET',
-                //    'isset($attributeName)' => isset($attributeName),
-                //    'isset($attributeValue)' => isset($attributeValue),
-                //    'elementAttributes' => $elementAttributes,
-                //]);
-
-                PHPUnit::assertTrue(isset($elementAttributes[$attributeName]));
-
-                if (isset($attributeValue)) {
-                    PHPUnit::assertEquals(
-                        $attributeValue,
-                        $elementAttributes[$attributeName],
-                        "Did not find expected value for attribute '{$attributeName}'."
+                // If callback was provided, use it.
+                if (is_callable($attributes)) {
+                    return $attributes(
+                        $element->tag->name(),
+                        $elementAttributes->toArray(),
+                        $element->text()
                     );
                 }
-            }
+
+                // Otherwise, treat as array.
+                foreach ($attributes as $attributeName => $attributeValue) {
+                    // If this is a numeric index and we have a value, the user
+                    // specified an attribute to search for without a value.
+                    // Treat the "value" as the attribute name.
+                    if (is_numeric($attributeName) && $attributeValue) {
+                        $attributeName = $attributeValue;
+                        unset($attributeValue);
+                    }
+
+                    // If attribute not found on this element, stop here.
+                    if (!isset($elementAttributes[$attributeName])) {
+                        return false;
+                    }
+
+                    // If attribute value is set & does not match, no good.
+                    if (isset($attributeValue)) {
+                        if ($attributeValue != $elementAttributes[$attributeName]) {
+                            return false;
+                        }
+                    }
+                }
+
+                // After the foreach() loop, we've found all attributes.
+                return true;
+            });
+
+            PHPUnit::assertNull(
+                $found,
+                "Should not find '{$selector}' with specified attributes in response."
+            );
 
             return $this;
+        });
+
+        TestResponse::macro('assertDontSeeTagContent', function ($selector, $content) {
+            return $this->assertDontSeeTag($selector, function ($tag, $tagAttributes, $text) use ($content) {
+                return $text == $content;
+            });
         });
     }
 }

@@ -43,4 +43,24 @@ class SeeHtmlTest extends TestCase
             return $text == 'Tell the world who you are!';
         });
     }
+
+    /** @test */
+    public function sees_textarea_via_content()
+    {
+        $response = $this->get('/');
+
+        $response->assertSeeTagContent('textarea[name=about]', 'Tell the world who you are!');
+    }
+
+    /** @test */
+    public function sees_input_when_several_input_tags_exist()
+    {
+        $response = $this->get('/');
+
+        // Instead of targeting the element via selector (input[name=email]),
+        // we want to verify we can find *any* <input> with matching attribute(s).
+        $response->assertSeeTag('input', [
+            'name' => 'email',
+        ]);
+    }
 }
