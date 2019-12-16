@@ -18,14 +18,14 @@ Once installed, your TestResponse instances now have access to new assertions. S
 
 ### TestResponse::assertSeeTag(string $selector, array $attributes)
 
-$selector is the name of a tag you want to match. You can get as specific as you want.
+**$selector** is the name of a tag you want to match. You can get as specific as you want. **$attributes** is either an array of attributes that the tag must have.
 
 | Simple | More Specific          |
 |--------|------------------------|
 | button | button.btn.btn-default |
 | a      | a[role=tab]            |
 
-### TestResponse::assertSeeTag(string $selector, callback)
+### TestResponse::assertSeeTag(string $selector, $callback)
 
 If you specify a callback, three parameters will be passed to it:
 
