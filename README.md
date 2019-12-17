@@ -4,7 +4,9 @@
 
 Laravel Tag Assertions aims to make the incredible [HTTP Tests](https://laravel.com/docs/master/http-tests) functionality that Laravel offers even more powerful by adding useful assertions for HTML tags.
 
-I've often wanted to assert that a response contained certain HTML content, but didn't want the whitespace to matter. I initially used `$response->assertSee()` and later experimented with regular expressions against the raw content, but was never satisfied. I could also use Laravel Dusk to make HTML assertions, but browser tests are too slow and sometimes fragile.
+### Motivations
+
+I've often wanted to assert that a response contained certain HTML elements (such as a Vue component with certain props), but didn't want newlines and other whitespace to matter. This made using methods like `$response->assertSee(...)` difficult to use for this particular use-case. Using Laravel Dusk wasn't a desireable option either because they can be slow and sometimes fragile.
 
 # Installation
 
