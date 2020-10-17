@@ -3,7 +3,7 @@
 namespace Rogne\LaravelTagAssertions;
 
 use Illuminate\Foundation\Testing\Assert as PHPUnit;
-use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Testing\TestResponse;
 use PHPHtmlParser\Dom;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
