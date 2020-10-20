@@ -2,7 +2,7 @@
 
 namespace Rogne\LaravelTagAssertions;
 
-use Illuminate\Foundation\Testing\Assert as PHPUnit;
+use Illuminate\Testing\Assert as PHPUnit;
 use Illuminate\Testing\TestResponse;
 use PHPHtmlParser\Dom;
 
