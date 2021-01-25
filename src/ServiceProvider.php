@@ -75,7 +75,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         TestResponse::macro('assertSeeTagContent', function ($selector, $content) {
             return $this->assertSeeTag($selector, function ($tag, $tagAttributes, $text) use ($content) {
-                return $text == $content;
+                return (strpos($text, $content) !== false);
             });
         });
 
