@@ -8,16 +8,20 @@ use PHPHtmlParser\Dom;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
+    /** @var Dom */
+    private $domCache;
+
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadViewsFrom(__DIR__ . '/views', 'laravel-tag-assertions');
 
         TestResponse::macro('assertSeeTag', function ($selector, $attributes = []) {
-            if (! isset($this->domCache)) {
+            if (!isset($this->domCache)) {
                 $this->domCache = new Dom;
                 $this->domCache->load($this->getContent());
             }
+
             $elements = collect($this->domCache->find($selector));
 
             PHPUnit::assertTrue(
@@ -82,7 +86,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         });
 
         TestResponse::macro('assertDontSeeTag', function ($selector, $attributes = []) {
-            if (! isset($this->domCache)) {
+            if (!isset($this->domCache)) {
                 $this->domCache = new Dom;
                 $this->domCache->load($this->getContent());
             }
