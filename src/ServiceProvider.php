@@ -55,7 +55,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                     }
 
                     // If attribute not found on this element, stop here.
-                    if (!isset($elementAttributes[$attributeName])) {
+                    if (!array_key_exists($attributeName, $elementAttributes->toArray())) {
                         return false;
                     }
 
@@ -124,7 +124,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                     }
 
                     // If attribute not found on this element, stop here.
-                    if (!isset($elementAttributes[$attributeName])) {
+                    if (!array_key_exists($attributeName, $elementAttributes->toArray())) {
                         return false;
                     }
 
