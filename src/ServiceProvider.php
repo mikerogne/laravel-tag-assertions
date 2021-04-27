@@ -150,7 +150,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         TestResponse::macro('assertDontSeeTagContent', function ($selector, $content) {
             return $this->assertDontSeeTag($selector, function ($tag, $tagAttributes, $text) use ($content) {
-                return $text == $content;
+                return (strpos($text, $content) !== false);
             });
         });
     }
