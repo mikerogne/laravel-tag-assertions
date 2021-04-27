@@ -2,7 +2,7 @@
     "name": "mikerogne/laravel-tag-assertions",
     "description": "Adds useful tag assertions to Laravel's TestResponse class.",
     "type": "library",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "license": "MIT",
     "require": {
         "paquettg/php-html-parser": "^2.1"
